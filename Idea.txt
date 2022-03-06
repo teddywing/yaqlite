@@ -1,0 +1,26 @@
+Program to translate from YAML to SQLite and back.
+
+$ yaqlite insert --db database.db 'table_name' records.yml
+
+# records.yml
+- column: value
+  column2: 2
+- column: value2
+  column2: 4
+
+translates to:
+
+INSERT INTO "table_name"
+	(column, column2)
+	VALUES
+	('value', 2),
+	('value2', 4);
+
+
+$ yaqlite select --db database.db 'table_name' <ID> > records.yml
+
+# records.yml
+- column: value
+  column2: value
+  column3: >
+    Multiline value.
