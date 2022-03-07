@@ -1,0 +1,2 @@
+-- Get type of column (only works when selecting rows in the table).
+SELECT typeof(column) FROM table;
