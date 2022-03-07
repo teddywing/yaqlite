@@ -1,0 +1,8 @@
+- name: Rory Mercury
+  description: >-
+    This is a line.
+
+    This is another line of the description
+    that is folded.
+  email: rory.mercury@example.com
+  person_id: 22
