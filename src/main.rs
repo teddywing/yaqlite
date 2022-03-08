@@ -6,6 +6,11 @@ fn main() {
 
     // Get column names from SQLite
 
+    let mut dbconn = rusqlite::Connection::open("./test.db").unwrap();
+
+    let table_columns = get_column_names(&mut dbconn);
+    dbg!(table_columns);
+
     let text_data = std::fs::read_to_string("test.yml").unwrap();
 
     let yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
@@ -15,6 +20,8 @@ fn main() {
     }
 
     dbg!(yaml_data);
+
+    dbconn.close().unwrap();
 }
 
 fn yaml_extract(doc: &yaml::Yaml) {
@@ -37,4 +44,33 @@ fn yaml_extract(doc: &yaml::Yaml) {
         }
         _ => {}
     }
+}
+
+fn get_column_names(dbconn: &mut rusqlite::Connection) -> Vec<String> {
+    let mut column_names = Vec::new();
+
+    // let tx = dbconn.transaction().unwrap();
+
+    // let mut stmt = tx.prepare(r#"
+    //     SELECT "name"
+    //     FROM pragma_table_info("test");
+    // "#).unwrap();
+
+    let mut stmt = dbconn.prepare(r#"
+        SELECT "name"
+        FROM pragma_table_info("test");
+    "#).unwrap();
+
+    let rows = stmt.query_map(
+        [],
+        |row| row.get(0),
+    ).unwrap();
+
+    for row in rows {
+        column_names.push(row.unwrap());
+    }
+
+    // tx.commit().unwrap();
+
+    column_names
 }
