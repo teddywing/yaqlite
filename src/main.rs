@@ -85,6 +85,7 @@ fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
     ).unwrap();
 
     for row in rows {
+        // TODO: Get the type of the column.
         column_names.insert(row.unwrap(), Zero{});
     }
 
