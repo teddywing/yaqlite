@@ -16,7 +16,11 @@ fn main() {
     let yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
 
     for doc in &yaml_data {
-        yaml_extract(&doc, &table_columns);
+        let tx = dbconn.transaction().unwrap();
+
+        yaml_extract(&doc, &tx, &table_columns);
+
+        tx.commit().unwrap();
     }
 
     dbg!(yaml_data);
@@ -24,7 +28,11 @@ fn main() {
     dbconn.close().unwrap();
 }
 
-fn yaml_extract(doc: &yaml::Yaml, table_columns: &HashMap<String, Zero>) {
+fn yaml_extract(
+    doc: &yaml::Yaml,
+    tx: &rusqlite::Transaction,
+    table_columns: &HashMap<String, Zero>,
+) {
     match doc {
         yaml::Yaml::Array(ref array) => {
             for yaml_value in array {
@@ -43,6 +51,16 @@ fn yaml_extract(doc: &yaml::Yaml, table_columns: &HashMap<String, Zero>) {
                     dbg!(k, v);
                 }
             }
+
+            tx.execute(
+                r#"
+                    INSERT INTO "people"
+                        ()
+                    VALUES
+                        ();
+                "#,
+                []
+            ).unwrap();
         }
         _ => {}
     }
