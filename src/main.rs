@@ -6,9 +6,9 @@ fn main() {
 
     // Get column names from SQLite
 
-    let mut dbconn = rusqlite::Connection::open("./test.db").unwrap();
+    let dbconn = rusqlite::Connection::open("./test.db").unwrap();
 
-    let table_columns = get_column_names(&mut dbconn);
+    let table_columns = get_column_names(&dbconn);
     dbg!(table_columns);
 
     let text_data = std::fs::read_to_string("test.yml").unwrap();
@@ -46,15 +46,8 @@ fn yaml_extract(doc: &yaml::Yaml) {
     }
 }
 
-fn get_column_names(dbconn: &mut rusqlite::Connection) -> Vec<String> {
+fn get_column_names(dbconn: &rusqlite::Connection) -> Vec<String> {
     let mut column_names = Vec::new();
-
-    // let tx = dbconn.transaction().unwrap();
-
-    // let mut stmt = tx.prepare(r#"
-    //     SELECT "name"
-    //     FROM pragma_table_info("test");
-    // "#).unwrap();
 
     let mut stmt = dbconn.prepare(r#"
         SELECT "name"
@@ -69,8 +62,6 @@ fn get_column_names(dbconn: &mut rusqlite::Connection) -> Vec<String> {
     for row in rows {
         column_names.push(row.unwrap());
     }
-
-    // tx.commit().unwrap();
 
     column_names
 }
