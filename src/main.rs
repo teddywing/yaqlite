@@ -46,8 +46,13 @@ fn yaml_extract(doc: &yaml::Yaml) {
     }
 }
 
-fn get_column_names(dbconn: &rusqlite::Connection) -> Vec<String> {
-    let mut column_names = Vec::new();
+#[derive(Debug)]
+struct Zero {}
+
+use std::collections::HashMap;
+
+fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
+    let mut column_names = HashMap::new();
 
     let mut stmt = dbconn.prepare(r#"
         SELECT "name"
@@ -60,7 +65,7 @@ fn get_column_names(dbconn: &rusqlite::Connection) -> Vec<String> {
     ).unwrap();
 
     for row in rows {
-        column_names.push(row.unwrap());
+        column_names.insert(row.unwrap(), Zero{});
     }
 
     column_names
