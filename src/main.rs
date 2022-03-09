@@ -31,7 +31,7 @@ fn main() {
 fn yaml_extract(
     doc: &yaml::Yaml,
     tx: &rusqlite::Transaction,
-    table_columns: &HashMap<String, String>,
+    table_columns: &HashMap<String, rusqlite::types::Type>,
 ) {
     match doc {
         yaml::Yaml::Array(ref array) => {
@@ -71,7 +71,7 @@ struct Zero {}
 
 use std::collections::HashMap;
 
-fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, String> {
+fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, rusqlite::types::Type> {
     let mut column_names = HashMap::new();
 
     let mut stmt = dbconn.prepare(r#"
@@ -103,8 +103,11 @@ fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, String> {
 
         let row = row_result.unwrap();
 
-        // TODO: Translate to rusqlite::types::Type.
-        column_names.insert(row.0, row.1);
+        let type_name: String = row.1;
+
+        let type_affinity = yaqlite::sqlite::affinity(&type_name);
+
+        column_names.insert(row.0, type_affinity);
     }
 
     column_names
