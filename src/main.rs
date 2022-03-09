@@ -31,7 +31,7 @@ fn main() {
 fn yaml_extract(
     doc: &yaml::Yaml,
     tx: &rusqlite::Transaction,
-    table_columns: &HashMap<String, Zero>,
+    table_columns: &HashMap<String, String>,
 ) {
     match doc {
         yaml::Yaml::Array(ref array) => {
@@ -71,22 +71,39 @@ struct Zero {}
 
 use std::collections::HashMap;
 
-fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
+fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, String> {
     let mut column_names = HashMap::new();
 
     let mut stmt = dbconn.prepare(r#"
-        SELECT "name"
+        SELECT
+            "name",
+            "type"
         FROM pragma_table_info("people");
     "#).unwrap();
 
     let rows = stmt.query_map(
         [],
-        |row| row.get(0),
+        |row| Ok((row.get(0).unwrap(), row.get(1).unwrap())),
     ).unwrap();
 
-    for row in rows {
+    for row_result in rows {
         // TODO: Get the type of the column.
-        column_names.insert(row.unwrap(), Zero{});
+        // $ sqlite3 -header test.db "select type from pragma_table_info(\"people\");"
+        // type
+        // text
+        // text
+        // text
+        // integer
+        // $ sqlite3 -header test.db "select type from pragma_table_info(\"test\");"
+        // type
+        // INTEGER
+        // TEXT
+        // DATETIME
+        // INTEGER
+
+        let row = row_result.unwrap();
+
+        column_names.insert(row.0, row.1);
     }
 
     column_names
