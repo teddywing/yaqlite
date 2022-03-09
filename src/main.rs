@@ -6,7 +6,7 @@ fn main() {
 
     // Get column names from SQLite
 
-    let dbconn = rusqlite::Connection::open("./test.db").unwrap();
+    let mut dbconn = rusqlite::Connection::open("./test.db").unwrap();
 
     let table_columns = get_column_names(&dbconn);
     dbg!(&table_columns);
@@ -36,7 +36,7 @@ fn yaml_extract(
     match doc {
         yaml::Yaml::Array(ref array) => {
             for yaml_value in array {
-                yaml_extract(yaml_value, table_columns);
+                yaml_extract(yaml_value, tx, table_columns);
             }
         }
         yaml::Yaml::Hash(ref hash) => {
@@ -52,15 +52,15 @@ fn yaml_extract(
                 }
             }
 
-            tx.execute(
-                r#"
-                    INSERT INTO "people"
-                        ()
-                    VALUES
-                        ();
-                "#,
-                []
-            ).unwrap();
+            // tx.execute(
+            //     r#"
+            //         INSERT INTO "people"
+            //             ()
+            //         VALUES
+            //             ();
+            //     "#,
+            //     []
+            // ).unwrap();
         }
         _ => {}
     }
