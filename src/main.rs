@@ -103,6 +103,7 @@ fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, String> {
 
         let row = row_result.unwrap();
 
+        // TODO: Translate to rusqlite::types::Type.
         column_names.insert(row.0, row.1);
     }
 
