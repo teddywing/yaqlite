@@ -52,6 +52,26 @@ fn yaml_extract(
                 }
             }
 
+            let mut stmt = tx.prepare(
+                &format!(
+                    r#"
+                        INSERT INTO "people"
+                            ({})
+                        VALUES
+                            ({});
+                    "#,
+                    // Wrap column names in quotes.
+                    hash.keys()
+                        .map(|k| format!(r#""{}""#, k.as_str().unwrap()))
+                        .collect::<Vec<String>>()
+                        .join(", "),
+                    // TODO: get len "?"s
+                    format!("{}?", "?, ".repeat(hash.len() - 1)),
+                )
+            ).unwrap();
+
+            // stmt.insert(rusqlite::params_from_iter(hash.values())).unwrap();
+
             // tx.execute(
             //     r#"
             //         INSERT INTO "people"
