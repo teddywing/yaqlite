@@ -70,7 +70,8 @@ fn yaml_extract(
                 )
             ).unwrap();
 
-            // stmt.insert(rusqlite::params_from_iter(hash.values())).unwrap();
+            let values = hash.values().map(|v| Yaml(v));
+            stmt.insert(rusqlite::params_from_iter(values)).unwrap();
 
             // tx.execute(
             //     r#"
@@ -131,4 +132,26 @@ fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, rusqlite::
     }
 
     column_names
+}
+
+struct Yaml<'a>(&'a yaml::Yaml);
+
+impl<'a> rusqlite::ToSql for Yaml<'a> {
+    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+        use rusqlite::types::ToSqlOutput;
+
+        let sql_output = match self.0 {
+            yaml::Yaml::Real(_) => ToSqlOutput::from(self.0.as_f64().unwrap()),
+            yaml::Yaml::Integer(_) => ToSqlOutput::from(self.0.as_i64().unwrap()),
+            yaml::Yaml::String(_) => ToSqlOutput::from(self.0.as_str().unwrap()),
+            yaml::Yaml::Boolean(_) => ToSqlOutput::from(self.0.as_bool().unwrap()),
+            yaml::Yaml::Array(_) => ToSqlOutput::from(rusqlite::types::Null),
+            yaml::Yaml::Hash(_) => ToSqlOutput::from(rusqlite::types::Null),
+            yaml::Yaml::Alias(_) => ToSqlOutput::from(rusqlite::types::Null),
+            yaml::Yaml::Null => ToSqlOutput::from(rusqlite::types::Null),
+            yaml::Yaml::BadValue => ToSqlOutput::from(rusqlite::types::Null),
+        };
+
+        Ok(sql_output)
+    }
 }
