@@ -43,22 +43,6 @@ fn yaml_extract(
             }
         }
         yaml::Yaml::Hash(ref mut hash) => {
-            // Begin transaction
-            // for (k, v) in hash {
-            //     // TODO: Put k,v in a HashMap prepared for SQLite interfacing
-            //     // Each hash is a new record for SQLite insertion
-            //
-            //     // If key matches a column name, add it to the insert statement
-            //
-            //     if table_columns.contains_key(k.as_str().unwrap()) {
-            //         dbg!(k, v);
-            //     }
-            // }
-
-            // let keys: Vec<&str> = hash
-            //     .keys()
-            //     .map(|k| k.as_str().unwrap())
-            //     .collect();
             let keys: Vec<yaml::Yaml> = hash.keys().map(|k| k.clone()).collect();
             let columns_as_yaml: Vec<yaml::Yaml> = table_columns.keys()
                 .map(|c| yaml::Yaml::from_str(c))
@@ -90,16 +74,6 @@ fn yaml_extract(
 
             let values = hash.values().map(|v| yaqlite::yaml::Yaml(v));
             stmt.insert(rusqlite::params_from_iter(values)).unwrap();
-
-            // tx.execute(
-            //     r#"
-            //         INSERT INTO "people"
-            //             ()
-            //         VALUES
-            //             ();
-            //     "#,
-            //     []
-            // ).unwrap();
         }
         _ => {}
     }
