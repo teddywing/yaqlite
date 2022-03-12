@@ -11,14 +11,14 @@ fn main() {
     let table_columns = get_column_names(&dbconn);
     dbg!(&table_columns);
 
-    let text_data = std::fs::read_to_string("test.yml").unwrap();
+    let text_data = std::fs::read_to_string("test2.yml").unwrap();
 
-    let yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
+    let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
 
-    for doc in &yaml_data {
+    for mut doc in &mut yaml_data {
         let tx = dbconn.transaction().unwrap();
 
-        yaml_extract(&doc, &tx, &table_columns);
+        yaml_extract(&mut doc, &tx, &table_columns);
 
         tx.commit().unwrap();
     }
@@ -29,26 +29,41 @@ fn main() {
 }
 
 fn yaml_extract(
-    doc: &yaml::Yaml,
+    doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,
     table_columns: &HashMap<String, rusqlite::types::Type>,
 ) {
     match doc {
-        yaml::Yaml::Array(ref array) => {
+        yaml::Yaml::Array(ref mut array) => {
             for yaml_value in array {
                 yaml_extract(yaml_value, tx, table_columns);
             }
         }
-        yaml::Yaml::Hash(ref hash) => {
+        yaml::Yaml::Hash(ref mut hash) => {
             // Begin transaction
-            for (k, v) in hash {
-                // TODO: Put k,v in a HashMap prepared for SQLite interfacing
-                // Each hash is a new record for SQLite insertion
+            // for (k, v) in hash {
+            //     // TODO: Put k,v in a HashMap prepared for SQLite interfacing
+            //     // Each hash is a new record for SQLite insertion
+            //
+            //     // If key matches a column name, add it to the insert statement
+            //
+            //     if table_columns.contains_key(k.as_str().unwrap()) {
+            //         dbg!(k, v);
+            //     }
+            // }
 
-                // If key matches a column name, add it to the insert statement
+            // let keys: Vec<&str> = hash
+            //     .keys()
+            //     .map(|k| k.as_str().unwrap())
+            //     .collect();
+            let keys: Vec<yaml::Yaml> = hash.keys().map(|k| k.clone()).collect();
+            let columns_as_yaml: Vec<yaml::Yaml> = table_columns.keys()
+                .map(|c| yaml::Yaml::from_str(c))
+                .collect();
 
-                if table_columns.contains_key(k.as_str().unwrap()) {
-                    dbg!(k, v);
+            for key in keys.iter() {
+                if !columns_as_yaml.contains(key) {
+                    hash.remove(key);
                 }
             }
 
