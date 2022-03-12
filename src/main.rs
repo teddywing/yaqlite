@@ -16,13 +16,7 @@ fn main() {
 
     let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
 
-    for mut doc in &mut yaml_data {
-        let tx = dbconn.transaction().unwrap();
-
-        yaqlite::yaml::extract(&mut doc, &tx, &table_columns);
-
-        tx.commit().unwrap();
-    }
+    yaqlite::insert(&mut dbconn, "people", &mut yaml_data);
 
     dbg!(yaml_data);
 
