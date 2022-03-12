@@ -40,13 +40,21 @@ pub fn affinity(type_name: &str) -> rusqlite::types::Type {
 pub struct Zero {}
 
 
-pub fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
+pub fn get_column_names(
+    dbconn: &rusqlite::Connection,
+    table_name: &str,
+) -> HashMap<String, Zero> {
     let mut column_names = HashMap::new();
 
-    let mut stmt = dbconn.prepare(r#"
-        SELECT "name"
-        FROM pragma_table_info("people");
-    "#).unwrap();
+    let mut stmt = dbconn.prepare(
+        &format!(
+            r#"
+                SELECT "name"
+                FROM pragma_table_info("{}");
+            "#,
+            table_name,
+        ),
+    ).unwrap();
 
     let rows = stmt.query_map(
         [],
