@@ -1,5 +1,7 @@
 use rusqlite;
 
+use std::collections::HashMap;
+
 
 /// Get the fundamental SQLite datatype for a given type name.
 ///
@@ -31,4 +33,31 @@ pub fn affinity(type_name: &str) -> rusqlite::types::Type {
     // TODO: Numeric affinity
 
     Type::Text
+}
+
+
+#[derive(Debug)]
+pub struct Zero {}
+
+
+pub fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
+    let mut column_names = HashMap::new();
+
+    let mut stmt = dbconn.prepare(r#"
+        SELECT "name"
+        FROM pragma_table_info("people");
+    "#).unwrap();
+
+    let rows = stmt.query_map(
+        [],
+        |row| row.get(0),
+    ).unwrap();
+
+    for row_result in rows {
+        let row = row_result.unwrap();
+
+        column_names.insert(row, Zero{});
+    }
+
+    column_names
 }

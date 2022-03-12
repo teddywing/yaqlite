@@ -1,6 +1,9 @@
 use rusqlite;
 use yaml_rust::yaml;
 
+use std::collections::HashMap;
+
+
 fn main() {
     println!("Hello, world!");
 
@@ -8,7 +11,7 @@ fn main() {
 
     let mut dbconn = rusqlite::Connection::open("./test.db").unwrap();
 
-    let table_columns = get_column_names(&dbconn);
+    let table_columns = yaqlite::sqlite::get_column_names(&dbconn);
     dbg!(&table_columns);
 
     let text_data = std::fs::read_to_string("test2.yml").unwrap();
@@ -31,7 +34,7 @@ fn main() {
 fn yaml_extract(
     doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,
-    table_columns: &HashMap<String, Zero>,
+    table_columns: &HashMap<String, yaqlite::sqlite::Zero>,
 ) {
     match doc {
         yaml::Yaml::Array(ref mut array) => {
@@ -100,31 +103,4 @@ fn yaml_extract(
         }
         _ => {}
     }
-}
-
-#[derive(Debug)]
-struct Zero {}
-
-use std::collections::HashMap;
-
-fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
-    let mut column_names = HashMap::new();
-
-    let mut stmt = dbconn.prepare(r#"
-        SELECT "name"
-        FROM pragma_table_info("people");
-    "#).unwrap();
-
-    let rows = stmt.query_map(
-        [],
-        |row| row.get(0),
-    ).unwrap();
-
-    for row_result in rows {
-        let row = row_result.unwrap();
-
-        column_names.insert(row, Zero{});
-    }
-
-    column_names
 }
