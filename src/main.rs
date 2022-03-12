@@ -107,7 +107,6 @@ struct Zero {}
 
 use std::collections::HashMap;
 
-// TODO: We don't need to include the type in the HashMap. Go back to Zero.
 fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
     let mut column_names = HashMap::new();
 
@@ -122,20 +121,6 @@ fn get_column_names(dbconn: &rusqlite::Connection) -> HashMap<String, Zero> {
     ).unwrap();
 
     for row_result in rows {
-        // TODO: Get the type of the column.
-        // $ sqlite3 -header test.db "select type from pragma_table_info(\"people\");"
-        // type
-        // text
-        // text
-        // text
-        // integer
-        // $ sqlite3 -header test.db "select type from pragma_table_info(\"test\");"
-        // type
-        // INTEGER
-        // TEXT
-        // DATETIME
-        // INTEGER
-
         let row = row_result.unwrap();
 
         column_names.insert(row, Zero{});
