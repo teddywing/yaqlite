@@ -27,7 +27,12 @@ enum Command {
 
         table_name: String,
 
+        #[clap(long)]
+        primary_key: Option<String>,
         record_id: String,
+
+        #[clap(long)]
+        exclude_column: Vec<String>,
     },
 }
 
@@ -68,7 +73,15 @@ fn main() {
         Command::Select {
             database,
             table_name,
+            primary_key,
             record_id,
-        } => {},
+            exclude_column,
+        } => {
+            let dbconn = rusqlite::Connection::open(database).unwrap();
+
+            yaqlite::select(&dbconn, &table_name, &record_id);
+
+            dbconn.close().unwrap();
+        },
     };
 }
