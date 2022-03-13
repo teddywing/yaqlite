@@ -54,8 +54,7 @@ mod tests {
             let mut stmt = conn.prepare(r#"
                 SELECT
                     id, count, weight, description
-                FROM "test"
-                LIMIT 1;
+                FROM "test";
             "#).unwrap();
 
             let rows = stmt.query_map(
@@ -135,6 +134,38 @@ r#"- description: >-
 
     #[test]
     fn inserts_multiple_records() {
+        let expected = vec![
+            TestRecord {
+                id: 1,
+                count: 10,
+                weight: 33.2,
+                description: "First".to_owned(),
+            },
+            TestRecord {
+                id: 2,
+                count: 12,
+                weight: 180.5,
+                description: "Second".to_owned(),
+            },
+        ];
+
+        let yaml_str = format!(
+r#"- description: {}
+  count: {}
+  weight: {}
+- description: {}
+  count: {}
+  weight: {}
+"#,
+            expected[0].description,
+            expected[0].count,
+            expected[0].weight,
+            expected[1].description,
+            expected[1].count,
+            expected[1].weight,
+        );
+
+        test_yaml_insert(&yaml_str, &expected);
     }
 
     #[test]
