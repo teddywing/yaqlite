@@ -23,8 +23,15 @@ pub fn insert(
 mod tests {
     use super::*;
 
-    #[test]
-    fn inserts_yaml_in_database() {
+    #[derive(Debug, PartialEq)]
+    struct TestRecord {
+        id: i8,
+        count: i16,
+        weight: f32,
+        description: String,
+    }
+
+    fn test_yaml_insert(yaml_str: &str, expected: &[TestRecord]) {
         let mut conn = rusqlite::Connection::open_in_memory().unwrap();
 
         conn.execute(
@@ -39,38 +46,6 @@ mod tests {
             []
         ).unwrap();
 
-        #[derive(Debug, PartialEq)]
-        struct TestRecord {
-            id: i8,
-            count: i16,
-            weight: f32,
-            description: String,
-        }
-
-        let description = r#"This is a test.
-
-    Another paragraph
-    with a flowed line."#;
-
-        let expected = TestRecord {
-            id: 1,
-            count: 99,
-            weight: 3.14,
-            description: r#"This is a test.
-Another paragraph with a flowed line."#.to_owned(),
-        };
-
-        let yaml_str = format!(
-r#"- description: >-
-    {}
-  count: {}
-  weight: {}
-"#,
-            description,
-            expected.count,
-            expected.weight,
-        );
-
         let mut data = yaml_rust::YamlLoader::load_from_str(&yaml_str).unwrap();
 
         insert(&mut conn, "test", &mut data);
@@ -83,7 +58,7 @@ r#"- description: >-
                 LIMIT 1;
             "#).unwrap();
 
-            let got = stmt.query_row(
+            let rows = stmt.query_map(
                 [],
                 |row| {
                     Ok(
@@ -97,10 +72,41 @@ r#"- description: >-
                 }
             ).unwrap();
 
+            let got: Vec<TestRecord> = rows.map(|r| r.unwrap()).collect();
+
             assert_eq!(expected, got);
         }
 
         conn.close().unwrap();
+    }
+
+    #[test]
+    fn inserts_yaml_in_database() {
+        let expected = TestRecord {
+            id: 1,
+            count: 99,
+            weight: 3.14,
+            description: r#"This is a test.
+Another paragraph with a flowed line."#.to_owned(),
+        };
+
+        let description = r#"This is a test.
+
+    Another paragraph
+    with a flowed line."#;
+
+        let yaml_str = format!(
+r#"- description: >-
+    {}
+  count: {}
+  weight: {}
+"#,
+            description,
+            expected.count,
+            expected.weight,
+        );
+
+        test_yaml_insert(&yaml_str, &vec![expected]);
     }
 
     #[test]
