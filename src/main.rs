@@ -62,8 +62,6 @@ fn main() {
 
             yaqlite::insert(&mut dbconn, &table_name, &mut yaml_data).unwrap();
 
-            dbg!(yaml_data);
-
             dbconn.close().unwrap();
         },
 
