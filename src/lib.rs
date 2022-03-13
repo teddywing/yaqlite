@@ -112,4 +112,12 @@ r#"- description: >-
     #[test]
     fn ignores_yaml_fields_that_are_not_column_names() {
     }
+
+    #[test]
+    fn inserts_multiple_records() {
+    }
+
+    #[test]
+    fn inserts_yaml_hash() {
+    }
 }
