@@ -9,13 +9,6 @@ mod sql;
 pub use sql::*;
 
 
-#[derive(thiserror::Error, Debug)]
-pub enum YamlError {
-    #[error("SQL error")]
-    Sqlite(#[from] rusqlite::Error),
-}
-
-
 // TODO: Separate functions to get a list of YAML hashes, and insert hashes into
 // the database.
 pub fn extract(
@@ -23,7 +16,7 @@ pub fn extract(
     tx: &rusqlite::Transaction,
     table_name: &str,
     table_columns: &HashMap<String, crate::sqlite::Zero>,
-) -> Result<(), YamlError> {
+) -> Result<(), crate::Error> {
     match doc {
         yaml::Yaml::Array(ref mut array) => {
             for yaml_value in array {

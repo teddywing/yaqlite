@@ -13,7 +13,7 @@ fn main() {
 
     let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
 
-    yaqlite::insert(&mut dbconn, "people", &mut yaml_data);
+    yaqlite::insert(&mut dbconn, "people", &mut yaml_data).unwrap();
 
     dbg!(yaml_data);
 
