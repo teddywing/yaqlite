@@ -41,9 +41,22 @@ fn main() {
             table_name,
             input_file,
         } => {
+            let input_file = match &input_file {
+                Some(f) => f,
+                None => "-",
+            };
+
             let mut dbconn = rusqlite::Connection::open(database).unwrap();
 
-            let text_data = std::fs::read_to_string(input_file.unwrap()).unwrap();
+            let mut text_data;
+            if input_file == "-" {
+                use std::io::Read;
+
+                text_data = String::new();
+                std::io::stdin().read_to_string(&mut text_data).unwrap();
+            } else {
+                text_data = std::fs::read_to_string(input_file).unwrap();
+            }
 
             let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
 
