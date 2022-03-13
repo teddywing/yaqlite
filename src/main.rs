@@ -40,22 +40,28 @@ fn main() {
     // Get column names from SQLite
 
     match args.command {
-        a @ Command::Insert { .. } => {
-            dbg!(a.database);
-        }
+        Command::Insert {
+            database,
+            table_name,
+            input_file,
+        } => {
+            let mut dbconn = rusqlite::Connection::open(database).unwrap();
 
-        a @ Command::Select { .. } => {}
+            let text_data = std::fs::read_to_string(input_file.unwrap()).unwrap();
+
+            let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
+
+            yaqlite::insert(&mut dbconn, &table_name, &mut yaml_data).unwrap();
+
+            dbg!(yaml_data);
+
+            dbconn.close().unwrap();
+        },
+
+        Command::Select {
+            database,
+            table_name,
+            record_id,
+        } => {},
     };
-
-    let mut dbconn = rusqlite::Connection::open("./test.db").unwrap();
-
-    let text_data = std::fs::read_to_string("test2.yml").unwrap();
-
-    let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
-
-    yaqlite::insert(&mut dbconn, "people", &mut yaml_data).unwrap();
-
-    dbg!(yaml_data);
-
-    dbconn.close().unwrap();
 }
