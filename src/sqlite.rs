@@ -37,7 +37,7 @@ pub fn affinity(type_name: &str) -> rusqlite::types::Type {
 
 
 #[derive(Debug)]
-pub struct Zero {}
+pub struct Zero;
 
 
 pub fn get_column_names(
