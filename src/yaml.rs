@@ -9,6 +9,13 @@ mod sql;
 pub use sql::*;
 
 
+#[derive(thiserror::Error, Debug)]
+pub enum YamlError {
+    #[error("SQL error")]
+    Sqlite(#[from] rusqlite::Error),
+}
+
+
 // TODO: Separate functions to get a list of YAML hashes, and insert hashes into
 // the database.
 pub fn extract(
@@ -16,11 +23,11 @@ pub fn extract(
     tx: &rusqlite::Transaction,
     table_name: &str,
     table_columns: &HashMap<String, crate::sqlite::Zero>,
-) {
+) -> Result<(), YamlError> {
     match doc {
         yaml::Yaml::Array(ref mut array) => {
             for yaml_value in array {
-                extract(yaml_value, tx, table_name, table_columns);
+                extract(yaml_value, tx, table_name, table_columns)?;
             }
         }
         yaml::Yaml::Hash(ref mut hash) => {
@@ -47,17 +54,23 @@ pub fn extract(
 
                     // Wrap column names in quotes.
                     hash.keys()
-                        .map(|k| format!(r#""{}""#, k.as_str().unwrap()))
+                        .map(|k| k.as_str())
+                        .filter(|k| k.is_some())
+
+                        // Always `Some`.
+                        .map(|k| format!(r#""{}""#, k.unwrap()))
                         .collect::<Vec<String>>()
                         .join(", "),
                     // TODO: get len "?"s
                     format!("{}?", "?, ".repeat(hash.len() - 1)),
                 )
-            ).unwrap();
+            )?;
 
             let values = hash.values().map(|v| Yaml(v));
-            stmt.insert(rusqlite::params_from_iter(values)).unwrap();
+            stmt.insert(rusqlite::params_from_iter(values))?;
         }
         _ => {}
     }
+
+    Ok(())
 }
