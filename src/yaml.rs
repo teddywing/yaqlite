@@ -12,12 +12,13 @@ pub use sql::*;
 pub fn extract(
     doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,
+    table_name: &str,
     table_columns: &HashMap<String, crate::sqlite::Zero>,
 ) {
     match doc {
         yaml::Yaml::Array(ref mut array) => {
             for yaml_value in array {
-                extract(yaml_value, tx, table_columns);
+                extract(yaml_value, tx, table_name, table_columns);
             }
         }
         yaml::Yaml::Hash(ref mut hash) => {
@@ -35,11 +36,13 @@ pub fn extract(
             let mut stmt = tx.prepare(
                 &format!(
                     r#"
-                        INSERT INTO "people"
+                        INSERT INTO "{}"
                             ({})
                         VALUES
                             ({});
                     "#,
+                    table_name,
+
                     // Wrap column names in quotes.
                     hash.keys()
                         .map(|k| format!(r#""{}""#, k.as_str().unwrap()))
