@@ -111,6 +111,26 @@ r#"- description: >-
 
     #[test]
     fn ignores_yaml_fields_that_are_not_column_names() {
+        let expected = TestRecord {
+            id: 1,
+            count: 55,
+            weight: 7.65,
+            description: "Some text content.".to_owned(),
+        };
+
+        let yaml_str = format!(
+r#"- description: >-
+    {}
+  count: {}
+  weight: {}
+  nonexistent_column: Must not be inserted.
+"#,
+            expected.description,
+            expected.count,
+            expected.weight,
+        );
+
+        test_yaml_insert(&yaml_str, &vec![expected]);
     }
 
     #[test]
