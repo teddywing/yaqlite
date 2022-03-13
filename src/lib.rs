@@ -7,7 +7,7 @@ pub fn insert(
     table_name: &str,
     data: &mut [yaml_rust::Yaml],
 ) {
-    let table_columns = crate::sqlite::get_column_names(&dbconn, table_name);
+    let table_columns = crate::sqlite::get_column_names(&dbconn, table_name).unwrap();
 
     for mut doc in data {
         let tx = dbconn.transaction().unwrap();

@@ -1,6 +1,14 @@
 use rusqlite;
+use thiserror;
 
 use std::collections::HashMap;
+
+
+#[derive(thiserror::Error, Debug)]
+pub enum SqliteError {
+    #[error("SQL error")]
+    Sqlite(#[from] rusqlite::Error),
+}
 
 
 /// Get the fundamental SQLite datatype for a given type name.
@@ -43,7 +51,7 @@ pub struct Zero;
 pub fn get_column_names(
     dbconn: &rusqlite::Connection,
     table_name: &str,
-) -> HashMap<String, Zero> {
+) -> Result<HashMap<String, Zero>, SqliteError> {
     let mut column_names = HashMap::new();
 
     let mut stmt = dbconn.prepare(
@@ -54,18 +62,18 @@ pub fn get_column_names(
             "#,
             table_name,
         ),
-    ).unwrap();
+    )?;
 
     let rows = stmt.query_map(
         [],
         |row| row.get(0),
-    ).unwrap();
+    )?;
 
     for row_result in rows {
-        let row = row_result.unwrap();
+        let row = row_result?;
 
         column_names.insert(row, Zero{});
     }
 
-    column_names
+    Ok(column_names)
 }
