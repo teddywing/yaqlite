@@ -1,9 +1,29 @@
+use clap::Parser;
 use rusqlite;
 use yaml_rust::yaml;
 
 
+#[derive(clap::Parser, Debug)]
+#[clap()]
+struct Args {
+    #[clap(subcommand)]
+    command: Command,
+
+    #[clap(long)]
+    database: String,
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum Command {
+    Insert,
+    Select,
+}
+
+
 fn main() {
     println!("Hello, world!");
+
+    let args = Args::parse();
 
     // Get column names from SQLite
 
