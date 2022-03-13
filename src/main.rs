@@ -35,8 +35,6 @@ enum Command {
 fn main() {
     let args = Args::parse();
 
-    // Get column names from SQLite
-
     match args.command {
         Command::Insert {
             database,
