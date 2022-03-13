@@ -33,8 +33,6 @@ enum Command {
 
 
 fn main() {
-    println!("Hello, world!");
-
     let args = Args::parse();
 
     // Get column names from SQLite
