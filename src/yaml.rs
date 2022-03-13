@@ -9,6 +9,8 @@ mod sql;
 pub use sql::*;
 
 
+// TODO: Separate functions to get a list of YAML hashes, and insert hashes into
+// the database.
 pub fn extract(
     doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,
