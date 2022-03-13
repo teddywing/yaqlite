@@ -8,10 +8,22 @@ impl<'a> rusqlite::ToSql for Yaml<'a> {
         use rusqlite::types::ToSqlOutput;
 
         let sql_output = match self.0 {
-            yaml::Yaml::Real(_) => ToSqlOutput::from(self.0.as_f64().unwrap()),
-            yaml::Yaml::Integer(_) => ToSqlOutput::from(self.0.as_i64().unwrap()),
-            yaml::Yaml::String(_) => ToSqlOutput::from(self.0.as_str().unwrap()),
-            yaml::Yaml::Boolean(_) => ToSqlOutput::from(self.0.as_bool().unwrap()),
+            yaml::Yaml::Real(_) => match self.0.as_f64() {
+                Some(v) => ToSqlOutput::from(v),
+                None => ToSqlOutput::from(rusqlite::types::Null),
+            },
+            yaml::Yaml::Integer(_) => match self.0.as_i64() {
+                Some(v) => ToSqlOutput::from(v),
+                None => ToSqlOutput::from(rusqlite::types::Null),
+            },
+            yaml::Yaml::String(_) => match self.0.as_str() {
+                Some(v) => ToSqlOutput::from(v),
+                None => ToSqlOutput::from(rusqlite::types::Null),
+            },
+            yaml::Yaml::Boolean(_) => match self.0.as_bool() {
+                Some(v) => ToSqlOutput::from(v),
+                None => ToSqlOutput::from(rusqlite::types::Null),
+            },
             yaml::Yaml::Array(_) => ToSqlOutput::from(rusqlite::types::Null),
             yaml::Yaml::Hash(_) => ToSqlOutput::from(rusqlite::types::Null),
             yaml::Yaml::Alias(_) => ToSqlOutput::from(rusqlite::types::Null),
