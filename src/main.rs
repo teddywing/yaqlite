@@ -9,9 +9,6 @@ fn main() {
 
     let mut dbconn = rusqlite::Connection::open("./test.db").unwrap();
 
-    let table_columns = yaqlite::sqlite::get_column_names(&dbconn, "people");
-    dbg!(&table_columns);
-
     let text_data = std::fs::read_to_string("test2.yml").unwrap();
 
     let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
