@@ -61,7 +61,6 @@ pub fn extract(
                         .map(|k| format!(r#""{}""#, k.unwrap()))
                         .collect::<Vec<String>>()
                         .join(", "),
-                    // TODO: get len "?"s
                     format!("{}?", "?, ".repeat(hash.len() - 1)),
                 )
             )?;
