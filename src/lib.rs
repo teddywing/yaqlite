@@ -4,7 +4,7 @@ pub mod yaml;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("SQL error")]
+    #[error("SQL error: {0}")]
     Sqlite(#[from] rusqlite::Error),
 }
 
