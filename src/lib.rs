@@ -139,5 +139,23 @@ r#"- description: >-
 
     #[test]
     fn inserts_yaml_hash() {
+        let expected = TestRecord {
+            id: 1,
+            count: 255,
+            weight: 86.6,
+            description: "Some text content.".to_owned(),
+        };
+
+        let yaml_str = format!(
+r#"description: {}
+count: {}
+weight: {}
+"#,
+            expected.description,
+            expected.count,
+            expected.weight,
+        );
+
+        test_yaml_insert(&yaml_str, &vec![expected]);
     }
 }
