@@ -3,6 +3,8 @@ pub fn select(
     table_name: &str,
     record_id: &str,
 ) -> yaml_rust::Yaml {
+    use crate::yaml::Yaml;
+
     let mut stmt = dbconn.prepare(
         &format!(
             r#"
@@ -15,13 +17,32 @@ pub fn select(
         ),
     ).unwrap();
 
+    let column_count = stmt.column_count();
+
     let rows = stmt.query_map(
         rusqlite::named_params! {
             ":pk_column": "id",
             ":pk": record_id,
         },
         |row| {
-            Ok(())
+            // let data: [dyn rusqlite::types::FromSql; column_count] = [rusqlite::types::Null; column_count];
+            // let data: Vec<dyn rusqlite::types::FromSql>
+            //     = Vec::with_capacity(column_count);
+            // let data = Vec::with_capacity(column_count);
+            let data: Vec<Yaml> = Vec::with_capacity(column_count);
+
+            // for i in 0..=column_count {
+            //     data.push(row.get(i));
+            // }
+
+            // TODO: column values must be converted to yaml_rust::Yaml in this
+            // closure.
+
+            for i in 0..=column_count {
+                data.push(row.get(i)?);
+            }
+
+            Ok(data)
         },
     ).unwrap();
 

@@ -34,3 +34,30 @@ impl<'a> rusqlite::ToSql for Yaml<'a> {
         Ok(sql_output)
     }
 }
+
+impl<'a> rusqlite::types::FromSql for Yaml<'a> {
+    fn column_result(
+        value: rusqlite::types::ValueRef<'_>,
+    ) -> rusqlite::types::FromSqlResult<Self> {
+        use rusqlite::types::ValueRef;
+
+        match value {
+            ValueRef::Integer(i) => Ok(Yaml(&yaml_rust::Yaml::Integer(i))),
+            ValueRef::Real(f) =>
+                Ok(Yaml(&yaml_rust::Yaml::Real(f.to_string()))),
+            ValueRef::Text(_) => {
+                let s = value.as_str()?;
+
+                Ok(Yaml(&yaml_rust::Yaml::String(s.to_owned())))
+            }
+            ValueRef::Blob(_) => {
+                // TODO: How should we handle blobs? Parsing as string might not
+                // make the most sense.
+                let b = value.as_str()?;
+
+                Ok(Yaml(&yaml_rust::Yaml::String(b.to_owned())))
+            }
+            ValueRef::Null => Ok(Yaml(&yaml_rust::Yaml::Null)),
+        }
+    }
+}
