@@ -29,7 +29,7 @@ pub fn select(
             // let data: Vec<dyn rusqlite::types::FromSql>
             //     = Vec::with_capacity(column_count);
             // let data = Vec::with_capacity(column_count);
-            let data: Vec<Yaml> = Vec::with_capacity(column_count);
+            let mut data: Vec<Yaml> = Vec::with_capacity(column_count);
 
             // for i in 0..=column_count {
             //     data.push(row.get(i));
