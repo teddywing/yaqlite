@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 mod sql;
 
-pub use sql::*;
+pub(crate) use sql::*;
 
 
 // TODO: Separate functions to get a list of YAML hashes, and insert hashes into

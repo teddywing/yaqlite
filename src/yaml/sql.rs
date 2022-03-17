@@ -3,7 +3,7 @@ use yaml_rust::yaml;
 use std::borrow::Cow;
 
 
-pub struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
+pub(crate) struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
 
 // impl<'a, Y> From<Y> for Yaml<'a>
 // where Y: Into<yaml_rust::Yaml>
