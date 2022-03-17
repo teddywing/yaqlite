@@ -24,6 +24,8 @@ pub fn extract(
             }
         }
         yaml::Yaml::Hash(ref mut hash) => {
+            use std::borrow::Cow;
+
             let keys: Vec<yaml::Yaml> = hash.keys().map(|k| k.clone()).collect();
             let columns_as_yaml: Vec<yaml::Yaml> = table_columns.keys()
                 .map(|c| yaml::Yaml::from_str(c))
@@ -58,7 +60,7 @@ pub fn extract(
                 )
             )?;
 
-            let values = hash.values().map(|v| Yaml(v));
+            let values = hash.values().map(|v| Yaml(Cow::Borrowed(v)));
             stmt.insert(rusqlite::params_from_iter(values))?;
         }
         _ => {}

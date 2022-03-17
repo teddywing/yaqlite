@@ -1,13 +1,25 @@
 use yaml_rust::yaml;
 
+use std::borrow::Cow;
 
-pub struct Yaml<'a>(pub &'a yaml::Yaml);
+
+pub struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
+
+// impl<'a, Y> From<Y> for Yaml<'a>
+// where Y: Into<yaml_rust::Yaml>
+// {
+//     fn from(yaml: Y) -> Self {
+//         Self(Cow::from(yaml))
+//     }
+// }
+
+// impl From<
 
 impl<'a> rusqlite::ToSql for Yaml<'a> {
     fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
         use rusqlite::types::ToSqlOutput;
 
-        let sql_output = match self.0 {
+        let sql_output = match *self.0 {
             yaml::Yaml::Real(_) => match self.0.as_f64() {
                 Some(v) => ToSqlOutput::from(v),
                 None => ToSqlOutput::from(rusqlite::types::Null),
@@ -42,22 +54,24 @@ impl<'a> rusqlite::types::FromSql for Yaml<'a> {
         use rusqlite::types::ValueRef;
 
         match value {
-            ValueRef::Integer(i) => Ok(Yaml(&yaml_rust::Yaml::Integer(i))),
+            ValueRef::Integer(i) => Ok(
+                Yaml(Cow::Owned(yaml_rust::Yaml::Integer(i))),
+            ),
             ValueRef::Real(f) =>
-                Ok(Yaml(&yaml_rust::Yaml::Real(f.to_string()))),
+                Ok(Yaml(Cow::Owned(yaml_rust::Yaml::Real(f.to_string())))),
             ValueRef::Text(_) => {
                 let s = value.as_str()?;
 
-                Ok(Yaml(&yaml_rust::Yaml::String(s.to_owned())))
+                Ok(Yaml(Cow::Owned(yaml_rust::Yaml::String(s.to_owned()))))
             }
             ValueRef::Blob(_) => {
                 // TODO: How should we handle blobs? Parsing as string might not
                 // make the most sense.
                 let b = value.as_str()?;
 
-                Ok(Yaml(&yaml_rust::Yaml::String(b.to_owned())))
+                Ok(Yaml(Cow::Owned(yaml_rust::Yaml::String(b.to_owned()))))
             }
-            ValueRef::Null => Ok(Yaml(&yaml_rust::Yaml::Null)),
+            ValueRef::Null => Ok(Yaml(Cow::Owned(yaml_rust::Yaml::Null))),
         }
     }
 }
