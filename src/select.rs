@@ -18,6 +18,7 @@ pub fn select(
     ).unwrap();
 
     let column_count = stmt.column_count();
+    dbg!(column_count);
 
     let rows = stmt.query_map(
         rusqlite::named_params! {
@@ -39,19 +40,34 @@ pub fn select(
             // closure.
 
             for i in 0..=column_count {
-                data.push(row.get(i)?);
+                // data.push(row.get(i)?);
+
+                let value = row.get(i)?;
+                dbg!(&value);
+                data.push(value);
             }
 
+            dbg!(&data);
             Ok(data)
         },
     ).unwrap();
+
+    dbg!("test");
+    for row_result in rows {
+        dbg!("a");
+        let row = row_result.unwrap();
+        dbg!(&row);
+
+        // return row[0].0.into_owned();
+    }
 
     // sqlite3 -header test.db '
     // SELECT "name"
     // FROM pragma_table_info("test")
     // WHERE "pk" != 0;'
 
-    todo!();
+    // todo!();
+    yaml_rust::Yaml::Null
 }
 
 
