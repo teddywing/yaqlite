@@ -16,6 +16,12 @@ pub(crate) struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
 
 // impl From<
 
+impl<'a> Yaml<'a> {
+    pub fn into_inner(self) -> yaml::Yaml {
+        self.0.into_owned()
+    }
+}
+
 impl<'a> rusqlite::ToSql for Yaml<'a> {
     fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
         use rusqlite::types::ToSqlOutput;

@@ -39,19 +39,26 @@ pub fn select(
             //     data.push(row.get(i)?);
             // }
 
-            let mut data: HashMap<&yaml_rust::Yaml, Yaml> = HashMap::new();
+            // let mut data: HashMap<&yaml_rust::Yaml, Yaml> = HashMap::new();
+            let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
-                data.insert(&column, row.get(i)?);
+                let column_value: Yaml = row.get(i)?;
+                data.insert(column.clone(), column_value.into_inner());
             }
 
             Ok(data)
         },
     ).unwrap();
 
+    let mut row = None;
     for row_result in rows {
-        let row = row_result.unwrap();
+        row = Some(yaml_rust::Yaml::Hash(row_result.unwrap()));
         dbg!(&row);
+    }
+
+    if let Some(r) = row {
+        return r;
     }
 
     // todo!();
