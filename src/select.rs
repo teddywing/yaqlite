@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+
 pub fn select(
     dbconn: &rusqlite::Connection,
     table_name: &str,
@@ -19,16 +22,27 @@ pub fn select(
     ).unwrap();
 
     let column_count = stmt.column_count();
+    let column_names: Vec<yaml_rust::Yaml> = stmt.column_names()
+        .iter()
+        .map(|col| yaml_rust::Yaml::String((*col).to_owned()))
+        .collect();
+    // dbg!(column_names);
 
     let rows = stmt.query_map(
         rusqlite::named_params! {
             ":pk": record_id,
         },
         |row| {
-            let mut data: Vec<Yaml> = Vec::with_capacity(column_count);
+            // let mut data: Vec<Yaml> = Vec::with_capacity(column_count);
+            //
+            // for i in 0..column_count {
+            //     data.push(row.get(i)?);
+            // }
 
-            for i in 0..column_count {
-                data.push(row.get(i)?);
+            let mut data: HashMap<&yaml_rust::Yaml, Yaml> = HashMap::new();
+
+            for (i, column) in column_names.iter().enumerate() {
+                data.insert(&column, row.get(i)?);
             }
 
             Ok(data)
