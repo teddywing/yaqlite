@@ -54,7 +54,7 @@ pub fn select(
             // TODO: column values must be converted to yaml_rust::Yaml in this
             // closure.
 
-            for i in 0..=column_count {
+            for i in 0..column_count {
                 // data.push(row.get(i)?);
 
                 let value = row.get(i)?;
