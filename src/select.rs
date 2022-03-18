@@ -77,6 +77,18 @@ mod tests {
 With multiple paragraphs.".to_owned(),
         };
 
+        let mut yaml_hash = yaml_rust::yaml::Hash::new();
+        yaml_hash.insert(
+            yaml_rust::Yaml::String("count".to_owned()),
+            yaml_rust::Yaml::Integer(record.count.into()),
+        );
+        yaml_hash.insert(
+            yaml_rust::Yaml::String("description".to_owned()),
+            yaml_rust::Yaml::String(record.description.clone()),
+        );
+
+        let expected = yaml_rust::Yaml::Hash(yaml_hash);
+
         let conn = rusqlite::Connection::open_in_memory().unwrap();
 
         conn.execute(
@@ -105,6 +117,8 @@ With multiple paragraphs.".to_owned(),
             let got = select(&conn, "test", "1");
 
             dbg!(&got);
+
+            assert_eq!(expected, got);
         }
 
         conn.close().unwrap();
