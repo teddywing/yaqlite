@@ -10,10 +10,11 @@ pub fn select(
             r#"
                 SELECT
                     *
-                FROM {}
-                WHERE "id" = :pk;
+                FROM "{}"
+                WHERE "{}" = :pk;
             "#,
             table_name,
+            "id",
         ),
     ).unwrap();
 
