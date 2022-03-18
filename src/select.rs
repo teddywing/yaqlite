@@ -19,70 +19,26 @@ pub fn select(
     ).unwrap();
 
     let column_count = stmt.column_count();
-    dbg!(column_count);
-
-    // dbg!(stmt.exists(
-    //     rusqlite::named_params! {
-    //         ":pk_column": "id",
-    //         ":pk": record_id,
-    //     },
-    // ));
-    // dbg!(stmt.expanded_sql());
-    // dbg!(&record_id);
 
     let rows = stmt.query_map(
         rusqlite::named_params! {
-            // ":pk_column": "id",
             ":pk": record_id,
         },
-
-        // &[
-        //     (":pk", record_id),
-        // ],
-
-        // &[record_id],
         |row| {
-            // let data: [dyn rusqlite::types::FromSql; column_count] = [rusqlite::types::Null; column_count];
-            // let data: Vec<dyn rusqlite::types::FromSql>
-            //     = Vec::with_capacity(column_count);
-            // let data = Vec::with_capacity(column_count);
             let mut data: Vec<Yaml> = Vec::with_capacity(column_count);
 
-            // for i in 0..=column_count {
-            //     data.push(row.get(i));
-            // }
-
-            // TODO: column values must be converted to yaml_rust::Yaml in this
-            // closure.
-
             for i in 0..column_count {
-                // data.push(row.get(i)?);
-
-                let value = row.get(i)?;
-                dbg!(&value);
-                data.push(value);
+                data.push(row.get(i)?);
             }
 
-            dbg!(&data);
             Ok(data)
         },
     ).unwrap();
 
-    dbg!("test");
     for row_result in rows {
-        dbg!("a");
         let row = row_result.unwrap();
         dbg!(&row);
-
-        // return row[0].0.into_owned();
     }
-
-    dbg!(&stmt.expanded_sql());
-
-    // sqlite3 -header test.db '
-    // SELECT "name"
-    // FROM pragma_table_info("test")
-    // WHERE "pk" != 0;'
 
     // todo!();
     yaml_rust::Yaml::Null
