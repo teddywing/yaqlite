@@ -20,11 +20,26 @@ pub fn select(
     let column_count = stmt.column_count();
     dbg!(column_count);
 
+    // dbg!(stmt.exists(
+    //     rusqlite::named_params! {
+    //         ":pk_column": "id",
+    //         ":pk": record_id,
+    //     },
+    // ));
+    // dbg!(stmt.expanded_sql());
+    // dbg!(&record_id);
+
     let rows = stmt.query_map(
         rusqlite::named_params! {
             ":pk_column": "id",
             ":pk": record_id,
         },
+
+        // &[
+        //     (":pk", record_id),
+        // ],
+
+        // &[record_id],
         |row| {
             // let data: [dyn rusqlite::types::FromSql; column_count] = [rusqlite::types::Null; column_count];
             // let data: Vec<dyn rusqlite::types::FromSql>
