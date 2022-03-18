@@ -76,6 +76,8 @@ pub fn select(
         // return row[0].0.into_owned();
     }
 
+    dbg!(&stmt.expanded_sql());
+
     // sqlite3 -header test.db '
     // SELECT "name"
     // FROM pragma_table_info("test")
