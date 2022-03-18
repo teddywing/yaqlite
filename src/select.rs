@@ -11,7 +11,7 @@ pub fn select(
                 SELECT
                     *
                 FROM {}
-                WHERE :pk_column = :pk;
+                WHERE "id" = :pk;
             "#,
             table_name,
         ),
@@ -31,7 +31,7 @@ pub fn select(
 
     let rows = stmt.query_map(
         rusqlite::named_params! {
-            ":pk_column": "id",
+            // ":pk_column": "id",
             ":pk": record_id,
         },
 
