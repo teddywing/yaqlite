@@ -65,16 +65,18 @@ pub fn select_by_column(
         },
     )?;
 
-    let mut row = None;
+    // Only one record is expected.
+    let mut records = yaml_rust::yaml::Array::with_capacity(1);
+
     for row_result in rows {
-        row = Some(yaml_rust::Yaml::Hash(row_result?));
+        records.push(yaml_rust::Yaml::Hash(row_result?));
     }
 
-    if let Some(r) = row {
-        return Ok(r);
+    match records.len() {
+        0 => Ok(yaml_rust::Yaml::Null),
+        1 => Ok(records.swap_remove(0)),
+        _ => Ok(yaml_rust::Yaml::Array(records)),
     }
-
-    Ok(yaml_rust::Yaml::Null)
 }
 
 
