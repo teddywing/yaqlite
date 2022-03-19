@@ -79,7 +79,7 @@ fn main() {
         } => {
             let dbconn = rusqlite::Connection::open(database).unwrap();
 
-            match primary_key {
+            let yaml_data = match primary_key {
                 Some(pk) => yaqlite::select_by_column(
                     &dbconn,
                     &table_name,
@@ -93,6 +93,11 @@ fn main() {
                     &record_id,
                 ).unwrap(),
             };
+
+            let mut emitter = yaml_rust::YamlEmitter::new(
+                &mut std::io::stdout().lock(),
+            );
+            emitter.dump(&yaml_data).unwrap();
 
             dbconn.close().unwrap();
         },
