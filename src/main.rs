@@ -94,9 +94,10 @@ fn main() {
                 ).unwrap(),
             };
 
-            let mut emitter = yaml_rust::YamlEmitter::new(
-                &mut std::io::stdout().lock(),
-            );
+            let stdout = std::io::stdout();
+            let mut stdout_handle = stdout.lock();
+            let mut buffer = yaqlite::yaml::IoAdapter::new(&mut stdout_handle);
+            let mut emitter = yaml_rust::YamlEmitter::new(&mut buffer);
             emitter.dump(&yaml_data).unwrap();
 
             dbconn.close().unwrap();

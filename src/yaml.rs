@@ -5,8 +5,11 @@ use std::collections::HashMap;
 
 
 mod sql;
+mod write;
 
 pub(crate) use sql::*;
+
+pub use write::*;
 
 
 // TODO: Separate functions to get a list of YAML hashes, and insert hashes into
