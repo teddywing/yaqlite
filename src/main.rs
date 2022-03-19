@@ -79,7 +79,20 @@ fn main() {
         } => {
             let dbconn = rusqlite::Connection::open(database).unwrap();
 
-            yaqlite::select(&dbconn, &table_name, &record_id).unwrap();
+            match primary_key {
+                Some(pk) => yaqlite::select_by_column(
+                    &dbconn,
+                    &table_name,
+                    &pk,
+                    &record_id,
+                ).unwrap(),
+
+                None => yaqlite::select(
+                    &dbconn,
+                    &table_name,
+                    &record_id,
+                ).unwrap(),
+            };
 
             dbconn.close().unwrap();
         },

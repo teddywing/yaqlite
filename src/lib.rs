@@ -3,7 +3,7 @@ pub mod sqlite;
 pub mod yaml;
 
 
-pub use select::select;
+pub use select::*;
 
 
 #[derive(thiserror::Error, Debug)]
