@@ -98,6 +98,7 @@ fn main() {
             let mut stdout_handle = stdout.lock();
             let mut buffer = yaqlite::yaml::IoAdapter::new(&mut stdout_handle);
             let mut emitter = yaml_rust::YamlEmitter::new(&mut buffer);
+            emitter.multiline_strings(true);
             emitter.dump(&yaml_data).unwrap();
 
             // YamlEmitter doesn't output a trailing newline.
