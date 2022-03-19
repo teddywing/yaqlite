@@ -14,6 +14,20 @@ pub fn select(
     table_name: &str,
     record_id: &str,
 ) -> Result<yaml_rust::Yaml, crate::Error> {
+    select_by_column(
+        dbconn,
+        table_name,
+        &crate::sqlite::table_primary_key_column(dbconn, table_name)?,
+        record_id,
+    )
+}
+
+pub fn select_by_column(
+    dbconn: &rusqlite::Connection,
+    table_name: &str,
+    primary_key_column: &str,
+    record_id: &str,
+) -> Result<yaml_rust::Yaml, crate::Error> {
     use crate::yaml::Yaml;
 
     let mut stmt = dbconn.prepare(
