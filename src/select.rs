@@ -13,7 +13,7 @@ pub fn select(
     dbconn: &rusqlite::Connection,
     table_name: &str,
     record_id: &str,
-) -> yaml_rust::Yaml {
+) -> Result<yaml_rust::Yaml, crate::Error> {
     use crate::yaml::Yaml;
 
     let mut stmt = dbconn.prepare(
@@ -27,7 +27,7 @@ pub fn select(
             table_name,
             "id",
         ),
-    ).unwrap();
+    )?;
 
     let column_count = stmt.column_count();
     // let column_names: Vec<yaml_rust::Yaml> = stmt.column_names()
@@ -80,7 +80,7 @@ pub fn select(
 
             Ok(data)
         },
-    ).unwrap();
+    )?;
 
     let mut row = None;
     for row_result in rows {
@@ -96,16 +96,16 @@ pub fn select(
         //
         // row = Some(yaml_rust::Yaml::Hash(data));
 
-        row = Some(yaml_rust::Yaml::Hash(row_result.unwrap()));
+        row = Some(yaml_rust::Yaml::Hash(row_result?));
         dbg!(&row);
     }
 
     if let Some(r) = row {
-        return r;
+        return Ok(r);
     }
 
     // todo!();
-    yaml_rust::Yaml::Null
+    Ok(yaml_rust::Yaml::Null)
 }
 
 
@@ -164,7 +164,7 @@ With multiple paragraphs.".to_owned(),
                 rusqlite::params![record.count, record.description],
             ).unwrap();
 
-            let got = select(&conn, "test", "1");
+            let got = select(&conn, "test", "1").unwrap();
 
             dbg!(&got);
 
