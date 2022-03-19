@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-
-
 pub fn select(
     dbconn: &rusqlite::Connection,
     table_name: &str,
