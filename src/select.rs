@@ -22,11 +22,18 @@ pub fn select(
     ).unwrap();
 
     let column_count = stmt.column_count();
-    let column_names: Vec<yaml_rust::Yaml> = stmt.column_names()
-        .iter()
-        .map(|col| yaml_rust::Yaml::String((*col).to_owned()))
-        .collect();
+    // let column_names: Vec<yaml_rust::Yaml> = stmt.column_names()
+    //     .iter()
+    //     .map(|col| yaml_rust::Yaml::String((*col).to_owned()))
+    //     .collect();
     // dbg!(column_names);
+    // let column_names = stmt.column_names();
+
+    let column_names: Vec<String> = stmt
+        .column_names()
+        .into_iter()
+        .map(String::from)
+        .collect();
 
     let rows = stmt.query_map(
         rusqlite::named_params! {
@@ -43,9 +50,21 @@ pub fn select(
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
+                let column_name = column.to_string();
                 let column_value: Yaml = row.get(i)?;
-                data.insert(column.clone(), column_value.into_inner());
+
+                data.insert(
+                    yaml_rust::Yaml::String(column_name),
+                    column_value.into_inner(),
+                );
             }
+
+            // let mut data: Vec<yaml_rust::Yaml> = Vec::with_capacity(column_count);
+            //
+            // for i in 0..column_count {
+            //     let column_value: Yaml = row.get(i)?;
+            //     data.push(column_value.into_inner());
+            // }
 
             Ok(data)
         },
@@ -53,6 +72,18 @@ pub fn select(
 
     let mut row = None;
     for row_result in rows {
+        // let mut data = yaml_rust::yaml::Hash::new();
+        // let column_values = row_result.unwrap();
+        //
+        // for (i, column) in column_names.iter().enumerate() {
+        //     data.insert(
+        //         yaml_rust::Yaml::String(column.to_string()),
+        //         column_values[i],
+        //     );
+        // }
+        //
+        // row = Some(yaml_rust::Yaml::Hash(data));
+
         row = Some(yaml_rust::Yaml::Hash(row_result.unwrap()));
         dbg!(&row);
     }
