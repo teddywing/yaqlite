@@ -1,14 +1,6 @@
 use std::collections::HashMap;
 
 
-// pub fn select_by_column(
-//     dbconn: &rusqlite::Connection,
-//     table_name: &str,
-//     primary_key_column: &str,
-//     record_id: &str,
-// ) {
-// }
-
 pub fn select(
     dbconn: &rusqlite::Connection,
     table_name: &str,
