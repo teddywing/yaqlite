@@ -137,8 +137,6 @@ With multiple paragraphs.".to_owned(),
 
             let got = select(&conn, "test", "1").unwrap();
 
-            dbg!(&got);
-
             assert_eq!(expected, got);
         }
 
