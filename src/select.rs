@@ -39,7 +39,7 @@ pub fn select_by_column(
                 WHERE "{}" = :pk;
             "#,
             table_name,
-            "id",
+            primary_key_column,
         ),
     )?;
 
@@ -72,7 +72,7 @@ pub fn select_by_column(
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
-                if column == "id" {
+                if column == primary_key_column {
                     continue
                 }
 
