@@ -50,7 +50,7 @@ pub fn select(
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
-                let column_name = column.to_string();
+                let column_name = column.to_owned();
                 let column_value: Yaml = row.get(i)?;
 
                 data.insert(
