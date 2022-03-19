@@ -32,14 +32,6 @@ pub fn select_by_column(
         ),
     )?;
 
-    let column_count = stmt.column_count();
-    // let column_names: Vec<yaml_rust::Yaml> = stmt.column_names()
-    //     .iter()
-    //     .map(|col| yaml_rust::Yaml::String((*col).to_owned()))
-    //     .collect();
-    // dbg!(column_names);
-    // let column_names = stmt.column_names();
-
     let column_names: Vec<String> = stmt
         .column_names()
         .into_iter()
@@ -51,16 +43,11 @@ pub fn select_by_column(
             ":pk": record_id,
         },
         |row| {
-            // let mut data: Vec<Yaml> = Vec::with_capacity(column_count);
-            //
-            // for i in 0..column_count {
-            //     data.push(row.get(i)?);
-            // }
-
-            // let mut data: HashMap<&yaml_rust::Yaml, Yaml> = HashMap::new();
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
+                // Don't include the primary key column in the resulting hash as
+                // it should not be editable.
                 if column == primary_key_column {
                     continue
                 }
@@ -74,40 +61,19 @@ pub fn select_by_column(
                 );
             }
 
-            // let mut data: Vec<yaml_rust::Yaml> = Vec::with_capacity(column_count);
-            //
-            // for i in 0..column_count {
-            //     let column_value: Yaml = row.get(i)?;
-            //     data.push(column_value.into_inner());
-            // }
-
             Ok(data)
         },
     )?;
 
     let mut row = None;
     for row_result in rows {
-        // let mut data = yaml_rust::yaml::Hash::new();
-        // let column_values = row_result.unwrap();
-        //
-        // for (i, column) in column_names.iter().enumerate() {
-        //     data.insert(
-        //         yaml_rust::Yaml::String(column.to_string()),
-        //         column_values[i],
-        //     );
-        // }
-        //
-        // row = Some(yaml_rust::Yaml::Hash(data));
-
         row = Some(yaml_rust::Yaml::Hash(row_result?));
-        dbg!(&row);
     }
 
     if let Some(r) = row {
         return Ok(r);
     }
 
-    // todo!();
     Ok(yaml_rust::Yaml::Null)
 }
 
