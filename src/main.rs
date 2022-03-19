@@ -100,6 +100,12 @@ fn main() {
             let mut emitter = yaml_rust::YamlEmitter::new(&mut buffer);
             emitter.dump(&yaml_data).unwrap();
 
+            // YamlEmitter doesn't output a trailing newline.
+            {
+                use std::io::Write;
+                writeln!(stdout_handle, "").unwrap();
+            }
+
             dbconn.close().unwrap();
         },
     };
