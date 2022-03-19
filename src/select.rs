@@ -50,6 +50,10 @@ pub fn select(
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
+                if column == "id" {
+                    continue
+                }
+
                 let column_name = column.to_owned();
                 let column_value: Yaml = row.get(i)?;
 
