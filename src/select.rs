@@ -46,6 +46,9 @@ pub fn select_by_column(
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
+                // TODO: Exclude "id" column separately in a subsequent "exclude
+                // columns" step.
+
                 // Don't include the primary key column in the resulting hash as
                 // it should not be editable.
                 if column == primary_key_column {
