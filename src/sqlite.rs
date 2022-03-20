@@ -3,6 +3,7 @@ use rusqlite;
 use std::collections::HashMap;
 
 
+// TODO: Delete
 /// Get the fundamental SQLite datatype for a given type name.
 ///
 /// Use the SQLite rules for type affinity described in:
