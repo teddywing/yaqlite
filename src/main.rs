@@ -33,6 +33,9 @@ enum Command {
 
         #[clap(long)]
         exclude_column: Option<Vec<String>>,
+
+        #[clap(long)]
+        include_primary_key: bool,
     },
 }
 
@@ -75,8 +78,13 @@ fn main() {
             table_name,
             primary_key,
             record_id,
-            exclude_column,
+            mut exclude_column,
+            include_primary_key,
         } => {
+            if exclude_column.is_none() && include_primary_key {
+                exclude_column = Some(Vec::new());
+            }
+
             let dbconn = rusqlite::Connection::open(database).unwrap();
 
             let yaml_data = match primary_key {
