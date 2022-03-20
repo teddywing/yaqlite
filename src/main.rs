@@ -85,12 +85,14 @@ fn main() {
                     &table_name,
                     &pk,
                     &record_id,
+                    &exclude_column,
                 ).unwrap(),
 
                 None => yaqlite::select(
                     &dbconn,
                     &table_name,
                     &record_id,
+                    &exclude_column,
                 ).unwrap(),
             };
 

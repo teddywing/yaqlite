@@ -1,22 +1,29 @@
-pub fn select(
+pub fn select<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,
     record_id: &str,
-) -> Result<yaml_rust::Yaml, crate::Error> {
+    exclude_columns: &[C],
+) -> Result<yaml_rust::Yaml, crate::Error>
+where C: AsRef<str> + PartialEq<String>
+{
     select_by_column(
         dbconn,
         table_name,
         &crate::sqlite::table_primary_key_column(dbconn, table_name)?,
         record_id,
+        exclude_columns,
     )
 }
 
-pub fn select_by_column(
+pub fn select_by_column<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,
     primary_key_column: &str,
     record_id: &str,
-) -> Result<yaml_rust::Yaml, crate::Error> {
+    exclude_columns: &[C],
+) -> Result<yaml_rust::Yaml, crate::Error>
+where C: AsRef<str> + PartialEq<String>
+{
     use crate::yaml::Yaml;
 
     let mut stmt = dbconn.prepare(
@@ -46,12 +53,8 @@ pub fn select_by_column(
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
-                // TODO: Exclude "id" column separately in a subsequent "exclude
-                // columns" step.
-
-                // Don't include the primary key column in the resulting hash as
-                // it should not be editable.
-                if column == primary_key_column {
+                // Don't include excluded columns in the resulting hash.
+                if exclude_columns.iter().any(|c| c == column) {
                     continue
                 }
 
