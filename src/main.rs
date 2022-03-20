@@ -41,6 +41,25 @@ enum Command {
 
 
 fn main() {
+    match run() {
+        Ok(_) => (),
+        Err(e) => {
+            eprint!("error");
+
+            for cause in e.chain() {
+                eprint!(": {}", cause);
+            }
+
+            eprintln!();
+
+            std::process::exit(exitcode::SOFTWARE);
+        }
+    }
+}
+
+fn run() -> anyhow::Result<()> {
+    use anyhow::Context;
+
     let args = Args::parse();
 
     match args.command {
@@ -54,23 +73,37 @@ fn main() {
                 None => "-",
             };
 
-            let mut dbconn = rusqlite::Connection::open(database).unwrap();
+            let mut dbconn = rusqlite::Connection::open(&database)
+                .with_context(||
+                    format!("can't connect to database '{}'", database)
+                )?;
 
             let mut text_data;
             if input_file == "-" {
                 use std::io::Read;
 
                 text_data = String::new();
-                std::io::stdin().read_to_string(&mut text_data).unwrap();
+                std::io::stdin().read_to_string(&mut text_data)
+                    .context("can't read from stdin")?;
             } else {
-                text_data = std::fs::read_to_string(input_file).unwrap();
+                text_data = std::fs::read_to_string(input_file)
+                    .with_context(||
+                        format!("can't read from file '{}'", input_file),
+                    )?;
             }
 
-            let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data).unwrap();
+            let mut yaml_data = yaml::YamlLoader::load_from_str(&text_data)
+                .context("can't parse YAML")?;
 
-            yaqlite::insert(&mut dbconn, &table_name, &mut yaml_data).unwrap();
+            yaqlite::insert(&mut dbconn, &table_name, &mut yaml_data)
+                .context("failed to insert data")?;
 
-            dbconn.close().unwrap();
+            dbconn.close()
+                .map_err(|e| {
+                    let (_, err) = e;
+                    err
+                })
+                .context("failed to close database")?;
         },
 
         Command::Select {
@@ -85,7 +118,10 @@ fn main() {
                 exclude_column = Some(Vec::new());
             }
 
-            let dbconn = rusqlite::Connection::open(database).unwrap();
+            let dbconn = rusqlite::Connection::open(&database)
+                .with_context(||
+                    format!("can't connect to database '{}'", database)
+                )?;
 
             let yaml_data = match primary_key {
                 Some(pk) => yaqlite::select_by_column(
@@ -94,14 +130,18 @@ fn main() {
                     &pk,
                     &record_id,
                     exclude_column.as_deref(),
-                ).unwrap(),
+                ).with_context(||
+                    format!("can't select record '{}'", record_id),
+                )?,
 
                 None => yaqlite::select(
                     &dbconn,
                     &table_name,
                     &record_id,
                     exclude_column.as_deref(),
-                ).unwrap(),
+                ).with_context(||
+                    format!("can't select record '{}'", record_id),
+                )?,
             };
 
             let stdout = std::io::stdout();
@@ -109,15 +149,24 @@ fn main() {
             let mut buffer = yaqlite::yaml::IoAdapter::new(&mut stdout_handle);
             let mut emitter = yaml_rust::YamlEmitter::new(&mut buffer);
             emitter.multiline_strings(true);
-            emitter.dump(&yaml_data).unwrap();
+            emitter.dump(&yaml_data)
+                .context("can't serialize YAML")?;
 
             // YamlEmitter doesn't output a trailing newline.
             {
                 use std::io::Write;
-                writeln!(stdout_handle, "").unwrap();
+                writeln!(stdout_handle, "")
+                    .context("failed to write to stdout")?;
             }
 
-            dbconn.close().unwrap();
+            dbconn.close()
+                .map_err(|e| {
+                    let (_, err) = e;
+                    err
+                })
+                .context("failed to close database")?;
         },
     };
+
+    Ok(())
 }

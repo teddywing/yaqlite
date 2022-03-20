@@ -4,6 +4,8 @@ version = "0.0.1"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.56"
+exitcode = "1.1.2"
 rusqlite = { version = "0.27.0", features = ["modern_sqlite"] }
 thiserror = "1.0.30"
 yaml-rust = { package = "yaml-rust-davvid", version = "0.5.1" }
