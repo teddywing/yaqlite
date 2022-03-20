@@ -32,7 +32,7 @@ enum Command {
         record_id: String,
 
         #[clap(long)]
-        exclude_column: Vec<String>,
+        exclude_column: Option<Vec<String>>,
     },
 }
 
@@ -85,14 +85,14 @@ fn main() {
                     &table_name,
                     &pk,
                     &record_id,
-                    &exclude_column,
+                    exclude_column.as_deref(),
                 ).unwrap(),
 
                 None => yaqlite::select(
                     &dbconn,
                     &table_name,
                     &record_id,
-                    &exclude_column,
+                    exclude_column.as_deref(),
                 ).unwrap(),
             };
 

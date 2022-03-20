@@ -2,7 +2,7 @@ pub fn select<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,
     record_id: &str,
-    exclude_columns: &[C],
+    exclude_columns: Option<&[C]>,
 ) -> Result<yaml_rust::Yaml, crate::Error>
 where C: AsRef<str> + PartialEq<String>
 {
@@ -20,7 +20,7 @@ pub fn select_by_column<C>(
     table_name: &str,
     primary_key_column: &str,
     record_id: &str,
-    exclude_columns: &[C],
+    exclude_columns: Option<&[C]>,
 ) -> Result<yaml_rust::Yaml, crate::Error>
 where C: AsRef<str> + PartialEq<String>
 {
@@ -53,9 +53,17 @@ where C: AsRef<str> + PartialEq<String>
             let mut data = yaml_rust::yaml::Hash::new();
 
             for (i, column) in column_names.iter().enumerate() {
-                // Don't include excluded columns in the resulting hash.
-                if exclude_columns.iter().any(|c| c == column) {
-                    continue
+                // Don't include excluded columns in the resulting hash. If
+                // `exclude_columns` is None, exclude the primary key column.
+                match exclude_columns {
+                    Some(exclude_columns) =>
+                        if exclude_columns.iter().any(|c| c == column) {
+                            continue
+                        }
+                    None =>
+                        if column == primary_key_column {
+                            continue
+                        }
                 }
 
                 let column_name = column.to_owned();
