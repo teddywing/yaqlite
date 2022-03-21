@@ -1,18 +1,13 @@
 use rusqlite;
 
-use std::collections::HashMap;
-
-
-#[derive(Debug)]
-pub struct Zero;
+use std::collections::HashSet;
 
 
 pub fn get_column_names(
     dbconn: &rusqlite::Connection,
     table_name: &str,
-// TODO: Use a HashSet instead
-) -> Result<HashMap<String, Zero>, crate::Error> {
-    let mut column_names = HashMap::new();
+) -> Result<HashSet<String>, crate::Error> {
+    let mut column_names = HashSet::new();
 
     let mut stmt = dbconn.prepare(
         &format!(
@@ -32,7 +27,7 @@ pub fn get_column_names(
     for row_result in rows {
         let row = row_result?;
 
-        column_names.insert(row, Zero{});
+        column_names.insert(row);
     }
 
     Ok(column_names)

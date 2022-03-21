@@ -1,7 +1,7 @@
 use rusqlite;
 use yaml_rust::yaml;
 
-use std::collections::HashMap;
+use std::collections::HashSet;
 
 
 mod sql;
@@ -18,7 +18,7 @@ pub fn extract(
     doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,
     table_name: &str,
-    table_columns: &HashMap<String, crate::sqlite::Zero>,
+    table_columns: &HashSet<String>,
 ) -> Result<(), crate::Error> {
     match doc {
         yaml::Yaml::Array(ref mut array) => {
@@ -30,7 +30,7 @@ pub fn extract(
             use std::borrow::Cow;
 
             let keys: Vec<yaml::Yaml> = hash.keys().map(|k| k.clone()).collect();
-            let columns_as_yaml: Vec<yaml::Yaml> = table_columns.keys()
+            let columns_as_yaml: Vec<yaml::Yaml> = table_columns.iter()
                 .map(|c| yaml::Yaml::from_str(c))
                 .collect();
 
