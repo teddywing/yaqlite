@@ -149,7 +149,7 @@ With multiple paragraphs.".to_owned(),
                 rusqlite::params![record.count, record.description],
             ).unwrap();
 
-            let got = select(&conn, "test", "1").unwrap();
+            let got = select::<String>(&conn, "test", "1", None).unwrap();
 
             assert_eq!(expected, got);
         }
