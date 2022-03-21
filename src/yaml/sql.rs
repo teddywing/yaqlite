@@ -7,17 +7,6 @@ use std::borrow::Cow;
 #[derive(Debug)]
 pub(crate) struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
 
-// TODO: Delete
-// impl<'a, Y> From<Y> for Yaml<'a>
-// where Y: Into<yaml_rust::Yaml>
-// {
-//     fn from(yaml: Y) -> Self {
-//         Self(Cow::from(yaml))
-//     }
-// }
-
-// impl From<
-
 impl<'a> Yaml<'a> {
     /// TODO
     pub fn into_inner(self) -> yaml::Yaml {
