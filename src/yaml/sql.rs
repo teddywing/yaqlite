@@ -3,12 +3,13 @@ use yaml_rust::yaml;
 use std::borrow::Cow;
 
 
-/// TODO
+/// Wrap `yaml_rust::Yaml`, adding implementations for `rusqlite::ToSql` and
+/// `rusqlite::types::FromSql`.
 #[derive(Debug)]
 pub(crate) struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
 
 impl<'a> Yaml<'a> {
-    /// TODO
+    /// Extracts the wrapped `yaml_rust::Yaml`.
     pub fn into_inner(self) -> yaml::Yaml {
         self.0.into_owned()
     }
