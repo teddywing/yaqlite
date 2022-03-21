@@ -44,6 +44,7 @@ pub struct Zero;
 pub fn get_column_names(
     dbconn: &rusqlite::Connection,
     table_name: &str,
+// TODO: Use a HashSet instead
 ) -> Result<HashMap<String, Zero>, crate::Error> {
     let mut column_names = HashMap::new();
 
