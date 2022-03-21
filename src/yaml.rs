@@ -14,6 +14,7 @@ pub use write::*;
 
 // TODO: Separate functions to get a list of YAML hashes, and insert hashes into
 // the database.
+/// TODO
 pub fn extract(
     doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,

@@ -3,9 +3,11 @@ use yaml_rust::yaml;
 use std::borrow::Cow;
 
 
+/// TODO
 #[derive(Debug)]
 pub(crate) struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
 
+// TODO: Delete
 // impl<'a, Y> From<Y> for Yaml<'a>
 // where Y: Into<yaml_rust::Yaml>
 // {
@@ -17,6 +19,7 @@ pub(crate) struct Yaml<'a>(pub Cow<'a, yaml::Yaml>);
 // impl From<
 
 impl<'a> Yaml<'a> {
+    /// TODO
     pub fn into_inner(self) -> yaml::Yaml {
         self.0.into_owned()
     }

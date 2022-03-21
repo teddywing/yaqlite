@@ -1,3 +1,4 @@
+/// TODO
 pub fn select<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,
@@ -15,6 +16,7 @@ where C: AsRef<str> + PartialEq<String>
     )
 }
 
+/// TODO
 pub fn select_by_column<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,

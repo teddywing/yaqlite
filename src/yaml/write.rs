@@ -1,8 +1,10 @@
+/// TODO
 pub struct IoAdapter<'a, T: std::io::Write> {
     inner: &'a mut T,
 }
 
 impl<'a, T: std::io::Write> IoAdapter<'a, T> {
+    /// TODO
     pub fn new(writer: &'a mut T) -> Self {
         IoAdapter { inner: writer }
     }
