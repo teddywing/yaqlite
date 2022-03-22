@@ -9,7 +9,7 @@ pub fn insert(
     for mut doc in data {
         let tx = dbconn.transaction()?;
 
-        crate::yaml::extract(&mut doc, &tx, &table_name, &table_columns)?;
+        crate::yaml::db_insert(&mut doc, &tx, &table_name, &table_columns)?;
 
         tx.commit()?;
     }

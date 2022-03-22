@@ -12,10 +12,8 @@ pub(crate) use sql::*;
 pub use write::*;
 
 
-// TODO: Separate functions to get a list of YAML hashes, and insert hashes into
-// the database.
-/// TODO
-pub fn extract(
+/// Insert a YAML document into the given table in the database.
+pub fn db_insert(
     doc: &mut yaml::Yaml,
     tx: &rusqlite::Transaction,
     table_name: &str,
@@ -24,7 +22,7 @@ pub fn extract(
     match doc {
         yaml::Yaml::Array(ref mut array) => {
             for yaml_value in array {
-                extract(yaml_value, tx, table_name, table_columns)?;
+                db_insert(yaml_value, tx, table_name, table_columns)?;
             }
         }
         yaml::Yaml::Hash(ref mut hash) => {
