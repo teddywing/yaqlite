@@ -3,7 +3,7 @@ use rusqlite;
 use std::collections::HashSet;
 
 
-/// TODO
+/// Get a list of the column names in the given table.
 pub fn get_column_names(
     dbconn: &rusqlite::Connection,
     table_name: &str,
