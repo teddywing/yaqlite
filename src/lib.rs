@@ -8,7 +8,7 @@ pub use insert::*;
 pub use select::*;
 
 
-/// TODO
+/// Yaqlite errors.
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("SQL error: {0}")]
