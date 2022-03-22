@@ -1,4 +1,4 @@
-/// TODO
+/// Select a record matching `record_id` from `dbconn` as YAML.
 pub fn select<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,
@@ -16,7 +16,8 @@ where C: AsRef<str> + PartialEq<String>
     )
 }
 
-/// TODO
+/// Select a record matching `record_id` in the `primary_key_column` column from
+/// `dbconn` as YAML.
 pub fn select_by_column<C>(
     dbconn: &rusqlite::Connection,
     table_name: &str,
