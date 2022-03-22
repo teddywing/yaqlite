@@ -1,10 +1,10 @@
-/// TODO
+/// Adapt a `std::io::Write` type into a `std::fmt::Write`.
 pub struct IoAdapter<'a, T: std::io::Write> {
     inner: &'a mut T,
 }
 
 impl<'a, T: std::io::Write> IoAdapter<'a, T> {
-    /// TODO
+    /// Create a new `IoAdapter` that wraps the given `std::io::Write` type.
     pub fn new(writer: &'a mut T) -> Self {
         IoAdapter { inner: writer }
     }
