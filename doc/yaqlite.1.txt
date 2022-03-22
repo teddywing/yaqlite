@@ -1,0 +1,30 @@
+yaqlite(1)
+==========
+
+NAME
+----
+yaqlite - YAML interface for SQLite
+
+SYNOPSIS
+--------
+'yaqlite' [--help] [--version] <command> [<args>]
+
+DESCRIPTION
+-----------
+TODO
+
+OPTIONS
+-------
+TODO
+
+COMMANDS
+--------
+TODO
+
+INSERT COMMAND
+--------------
+TODO
+
+SELECT COMMAND
+--------------
+TODO
