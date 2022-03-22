@@ -1,4 +1,4 @@
-/// TODO
+/// Insert YAML `data` records into the given database.
 pub fn insert(
     dbconn: &mut rusqlite::Connection,
     table_name: &str,
