@@ -15,11 +15,19 @@ TODO
 
 OPTIONS
 -------
-TODO
+-h, --help::
+	Print usage help.
+
+-V, --version::
+	Print the program version.
 
 COMMANDS
 --------
-TODO
+*insert*::
+	Insert a record from YAML.
+
+*select*::
+	Select a record as YAML.
 
 INSERT COMMAND
 --------------
