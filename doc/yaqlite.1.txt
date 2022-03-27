@@ -11,7 +11,8 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-TODO
+A bridge between YAML and SQLite. Enables inserting YAML records into a
+database and selecting records as YAML.
 
 OPTIONS
 -------
@@ -38,6 +39,9 @@ Insert Synopsis
 
 Insert Description
 ~~~~~~~~~~~~~~~~~~
+Insert a YAML-formatted record into <table-name>. The YAML is read from
+<input-file> if specified. If <input-file> is "-" or empty, YAML is read from
+standard input.
 
 Insert Options
 ~~~~~~~~~~~~~~
@@ -46,7 +50,6 @@ Insert Options
 
 SELECT COMMAND
 --------------
-TODO
 
 Select Synopsis
 ~~~~~~~~~~~~~~~
@@ -54,6 +57,8 @@ Select Synopsis
 
 Select Description
 ~~~~~~~~~~~~~~~~~~
+Select a record by <record-id> from <table-name>. The record will output in
+YAML format to standard output.
 
 Select Options
 ~~~~~~~~~~~~~~

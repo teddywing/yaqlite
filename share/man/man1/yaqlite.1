@@ -34,7 +34,7 @@ yaqlite \- YAML interface for SQLite
 \fIyaqlite\fR [\-\-help] [\-\-version] <command> [<args>]
 .SH "DESCRIPTION"
 .sp
-TODO
+A bridge between YAML and SQLite\&. Enables inserting YAML records into a database and selecting records as YAML\&.
 .SH "OPTIONS"
 .PP
 \-h, \-\-help
@@ -62,6 +62,8 @@ Select a record as YAML\&.
 .sp
 \fIyaqlite insert\fR [<options>] <table\-name> [<input\-file>]
 .SS "Insert Description"
+.sp
+Insert a YAML\-formatted record into <table\-name>\&. The YAML is read from <input\-file> if specified\&. If <input\-file> is "\-" or empty, YAML is read from standard input\&.
 .SS "Insert Options"
 .PP
 \-\-database
@@ -69,12 +71,12 @@ Select a record as YAML\&.
 The database to insert into\&.
 .RE
 .SH "SELECT COMMAND"
-.sp
-TODO
 .SS "Select Synopsis"
 .sp
 \fIyaqlite select\fR [<options>] <table\-name> <record\-id>
 .SS "Select Description"
+.sp
+Select a record by <record\-id> from <table\-name>\&. The record will output in YAML format to standard output\&.
 .SS "Select Options"
 .PP
 \-\-database
