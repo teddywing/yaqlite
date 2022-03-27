@@ -18,12 +18,10 @@ database and selecting records as YAML.
 
 	$ yaqlite insert --database test.db restaurants <<EOF
 	name: Western Restaurant Nekoya
-	description: >-
-	  Located in the business district, this restaurant serves a wide variety of
-	  cuisine for all tastes and appetites.
+	description: |-
+	  Located in the business district, this restaurant serves a wide variety of cuisine for all tastes and appetites.
 
-	  Enjoy hearty dishes like the beef stew, and conclude with a chocolate parfait
-	  so light and airy you'll think you're eating a cloud.
+	  Enjoy hearty dishes like the beef stew, and conclude with a chocolate parfait so light and airy you'll think you're eating a cloud.
 	rating: 5
 	EOF
 
@@ -32,6 +30,7 @@ database and selecting records as YAML.
 	name: Western Restaurant Nekoya
 	description: |
 	  Located in the business district, this restaurant serves a wide variety of cuisine for all tastes and appetites.
+
 	  Enjoy hearty dishes like the beef stew, and conclude with a chocolate parfait so light and airy you'll think you're eating a cloud.
 	rating: 5
 
