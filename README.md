@@ -43,6 +43,10 @@ source][teddywing ports repository]:
 
 [teddywing ports repository]: https://github.com/teddywing/macports-ports#adding-this-repository-source
 
+Or download a pre-built binary from the [releases page].
+
+[releases page]: https://github.com/teddywing/yaqlite/releases
+
 To compile from source or install on other platforms:
 
 	$ cargo install --git https://github.com/teddywing/yaqlite.git
