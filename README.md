@@ -7,13 +7,13 @@ database and selecting records as YAML.
 
 ## Usage
 	$ sqlite3 test.db <<EOF
-		CREATE TABLE "restaurants" (
-			id INTEGER PRIMARY KEY,
+	CREATE TABLE "restaurants" (
+		id INTEGER PRIMARY KEY,
 
-			name TEXT,
-			description TEXT,
-			rating INTEGER
-		);
+		name TEXT,
+		description TEXT,
+		rating INTEGER
+	);
 	EOF
 
 	$ yaqlite insert --database test.db restaurants <<EOF
