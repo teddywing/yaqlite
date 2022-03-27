@@ -31,8 +31,43 @@ COMMANDS
 
 INSERT COMMAND
 --------------
-TODO
+
+Insert Synopsis
+~~~~~~~~~~~~~~~
+'yaqlite insert' [<options>] <table-name> [<input-file>]
+
+Insert Description
+~~~~~~~~~~~~~~~~~~
+
+Insert Options
+~~~~~~~~~~~~~~
+--database::
+	The database to insert into.
 
 SELECT COMMAND
 --------------
 TODO
+
+Select Synopsis
+~~~~~~~~~~~~~~~
+'yaqlite select' [<options>] <table-name> <record-id>
+
+Select Description
+~~~~~~~~~~~~~~~~~~
+
+Select Options
+~~~~~~~~~~~~~~
+--database::
+	The database to select from.
+
+--exclude-column::
+	Exclude the given column from the YAML output. This option can be given
+	multiple times to exclude several columns.
+
+--include-primary-key::
+	Include the primary key field in the YAML output. By default, the primary
+	key is excluded.
+
+--primary_key::
+	Name of the column to that matches <record-id>. Defaults to the table's
+	primary key.

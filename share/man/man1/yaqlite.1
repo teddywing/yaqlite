@@ -2,12 +2,12 @@
 .\"     Title: yaqlite
 .\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 03/25/2022
+.\"      Date: 03/27/2022
 .\"    Manual: \ \&
 .\"    Source: \ \&
 .\"  Language: English
 .\"
-.TH "YAQLITE" "1" "03/25/2022" "\ \&" "\ \&"
+.TH "YAQLITE" "1" "03/27/2022" "\ \&" "\ \&"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -58,8 +58,41 @@ Insert a record from YAML\&.
 Select a record as YAML\&.
 .RE
 .SH "INSERT COMMAND"
+.SS "Insert Synopsis"
 .sp
-TODO
+\fIyaqlite insert\fR [<options>] <table\-name> [<input\-file>]
+.SS "Insert Description"
+.SS "Insert Options"
+.PP
+\-\-database
+.RS 4
+The database to insert into\&.
+.RE
 .SH "SELECT COMMAND"
 .sp
 TODO
+.SS "Select Synopsis"
+.sp
+\fIyaqlite select\fR [<options>] <table\-name> <record\-id>
+.SS "Select Description"
+.SS "Select Options"
+.PP
+\-\-database
+.RS 4
+The database to select from\&.
+.RE
+.PP
+\-\-exclude\-column
+.RS 4
+Exclude the given column from the YAML output\&. This option can be given multiple times to exclude several columns\&.
+.RE
+.PP
+\-\-include\-primary\-key
+.RS 4
+Include the primary key field in the YAML output\&. By default, the primary key is excluded\&.
+.RE
+.PP
+\-\-primary_key
+.RS 4
+Name of the column to that matches <record\-id>\&. Defaults to the table\(cqs primary key\&.
+.RE
