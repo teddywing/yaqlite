@@ -41,8 +41,11 @@ source][teddywing ports repository]:
 
 	$ sudo port install yaqlite
 
-
 [teddywing ports repository]: https://github.com/teddywing/macports-ports#adding-this-repository-source
+
+To compile from source or install on other platforms:
+
+	$ cargo install --git https://github.com/teddywing/yaqlite.git
 
 
 ## License
