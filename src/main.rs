@@ -38,6 +38,18 @@ enum Command {
         input_file: Option<String>,
     },
 
+    Update {
+        #[clap(long)]
+        database: String,
+
+        #[clap(long)]
+        primary_key: String,
+
+        table_name: String,
+
+        input_file: Option<String>,
+    },
+
     Select {
         #[clap(long)]
         database: String,
