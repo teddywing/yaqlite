@@ -42,7 +42,7 @@ enum Command {
         #[clap(long)]
         database: String,
 
-        #[clap(long)]
+        #[clap(long, help = "Format: <column_name>=<primary-key>")]
         primary_key: String,
 
         table_name: String,
@@ -134,6 +134,8 @@ fn run() -> anyhow::Result<()> {
                 })
                 .context("failed to close database")?;
         },
+
+        Command::Update { .. } => {},
 
         Command::Select {
             database,
