@@ -36,25 +36,12 @@ pub fn db_insert(
     table_name: &str,
     table_columns: &HashSet<String>,
 ) -> Result<(), crate::Error> {
-    match doc {
-        yaml::Yaml::Array(ref mut array) => {
-            for yaml_value in array {
-                db_insert(yaml_value, tx, table_name, table_columns)?;
-            }
-        }
-        yaml::Yaml::Hash(ref mut hash) => {
+    with_hash(
+        doc,
+        &mut |hash| {
             use std::borrow::Cow;
 
-            let keys: Vec<yaml::Yaml> = hash.keys().map(|k| k.clone()).collect();
-            let columns_as_yaml: Vec<yaml::Yaml> = table_columns.iter()
-                .map(|c| yaml::Yaml::from_str(c))
-                .collect();
-
-            for key in keys.iter() {
-                if !columns_as_yaml.contains(key) {
-                    hash.remove(key);
-                }
-            }
+            hash_filter_table_columns(hash, &table_columns);
 
             let mut stmt = tx.prepare(
                 &format!(
@@ -81,9 +68,47 @@ pub fn db_insert(
 
             let values = hash.values().map(|v| Yaml(Cow::Borrowed(v)));
             stmt.insert(rusqlite::params_from_iter(values))?;
+
+            Ok(())
+        }
+    )
+}
+
+/// Parse a YAML document and run a function for all hashes in the document.
+fn with_hash<F>(
+    doc: &mut yaml::Yaml,
+    run: &mut F,
+) -> Result<(), crate::Error>
+where F: FnMut(&mut yaml::Hash) -> Result<(), crate::Error>
+{
+    match doc {
+        yaml::Yaml::Array(ref mut array) => {
+            for yaml_value in array {
+                with_hash(yaml_value, run)?;
+            }
+        }
+        yaml::Yaml::Hash(ref mut hash) => {
+            run(hash)?;
         }
         _ => {}
     }
 
     Ok(())
+}
+
+/// Remove keys in `table_columns` from `hash`.
+fn hash_filter_table_columns(
+    hash: &mut yaml::Hash,
+    table_columns: &HashSet<String>,
+) {
+    let keys: Vec<yaml::Yaml> = hash.keys().map(|k| k.clone()).collect();
+    let columns_as_yaml: Vec<yaml::Yaml> = table_columns.iter()
+        .map(|c| yaml::Yaml::from_str(c))
+        .collect();
+
+    for key in keys.iter() {
+        if !columns_as_yaml.contains(key) {
+            hash.remove(key);
+        }
+    }
 }
