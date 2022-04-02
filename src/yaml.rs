@@ -74,6 +74,78 @@ pub fn db_insert(
     )
 }
 
+/// TODO
+pub fn db_update(
+    doc: &mut yaml::Yaml,
+    tx: &rusqlite::Transaction,
+    table_name: &str,
+    table_columns: &HashSet<String>,
+    primary_key_column: &str,
+    record_id: &str,
+) -> Result<(), crate::Error> {
+    with_hash(
+        doc,
+        &mut |hash| {
+            use std::borrow::Cow;
+
+            hash_filter_table_columns(hash, &table_columns);
+
+            let mut stmt = tx.prepare(
+                &format!(
+                    r#"
+                        UPDATE "{}"
+                        SET
+                            {}
+                        WHERE {} = ?;
+                    "#,
+                    table_name,
+
+                    // List of:
+                    //   "column_name" = ?,
+                    //   "column_name" = ?
+                    hash.keys()
+                        .map(|k| k.as_str())
+                        .filter(|k| k.is_some())
+
+                        // Always `Some`.
+                        .map(|k| format!(r#""{}" = ?"#, k.unwrap()))
+                        .collect::<Vec<String>>()
+                        .join(", "),
+
+                    primary_key_column,
+                ),
+            )?;
+
+            // TODO: convert to &[&dyn ToSql] ?
+            // let values = hash.values().map(|v| Yaml(Cow::Borrowed(v)));
+            // values.push(primary_key);
+            // stmt.execute(rusqlite::params_from_iter(values))?;
+
+            // let values: Vec<&dyn rusqlite::ToSql>;
+            //
+            // for v in hash.values() {
+            //     values.push(&Yaml(Cow::Borrowed(v)));
+            // }
+            //
+            // stmt.execute(values)?;
+
+            // let values: dyn Iterator<Item = &dyn rusqlite::ToSql> = hash.values();
+            // values = values.map(|v| Yaml(Cow::Borrowed(v)));
+            // values.chain(&[&primary_key]);
+            // stmt.execute(rusqlite::params_from_iter(values))?;
+
+            let mut values: Vec<_> = hash.values()
+                .map(|v| Yaml(Cow::Borrowed(v)))
+                .map(|v| Box::new(v) as Box<dyn rusqlite::ToSql>)
+                .collect();
+            values.push(Box::new(record_id));
+            stmt.execute(rusqlite::params_from_iter(values))?;
+
+            Ok(())
+        }
+    )
+}
+
 /// Parse a YAML document and run a function for all hashes in the document.
 fn with_hash<F>(
     doc: &mut yaml::Yaml,

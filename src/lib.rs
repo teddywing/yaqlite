@@ -18,11 +18,13 @@
 pub mod insert;
 pub mod select;
 pub mod sqlite;
+pub mod update;
 pub mod yaml;
 
 
 pub use insert::*;
 pub use select::*;
+pub use update::*;
 
 
 /// Yaqlite errors.
