@@ -205,4 +205,28 @@ weight: {}
 
         test_yaml_insert(&yaml_str, &vec![expected]);
     }
+
+    #[test]
+    fn insert_ignores_non_column_yaml_fields() {
+        let expected = TestRecord {
+            id: 1,
+            count: 102,
+            weight: 79.4,
+            description: "Some text content.".to_owned(),
+        };
+
+        let yaml_str = format!(
+r#"description: {}
+count: {}
+weight: {}
+key_is_not_a_column: 44
+not-a-column: Text that shouldn't be inserted.
+"#,
+            expected.description,
+            expected.count,
+            expected.weight,
+        );
+
+        test_yaml_insert(&yaml_str, &vec![expected]);
+    }
 }
